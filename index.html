@@ -55,13 +55,62 @@
 
 <script>
     const bonjours = [
-        "Bonjour", "Salut", "Coucou", "Hello", "Hi", "Hey",
-        "Hola", "Buenos días", "Ciao", "Hallo", "Olá", "Hej",
-        "こんにちは", "안녕하세요", "مرحبا", "Привет", "你好",
+        /* Français */
+        "Bonjour",
+
+        /* Anglais */
+        "Hello",
+        "Good morning",
+
+        /* Espagnol */
+        "Buenos días",
+
+        /* Italien */
+        "Buongiorno",
+
+        /* Allemand */
+        "Guten Tag",
+
+        /* Portugais */
+        "Bom dia",
+
+        /* Néerlandais */
+        "Goedendag",
+
+        /* Scandinave */
+        "God morgon",
+        "God dag",
+
+        /* Japonais */
+        "こんにちは",
+
+        /* Coréen */
+        "안녕하세요",
+
+        /* Arabe */
+        "مرحبا",
+
+        /* Russe */
+        "Здравствуйте",
+
+        /* Chinois */
+        "您好",
+
+        /* Turc */
+        "Merhaba",
+
+        /* Grec */
+        "Γειά σας",
+
+        /* Hébreu */
+        "שלום",
+
+        /* Hindi */
+        "नमस्ते",
 
         /* Québécois 🇨🇦 */
-        "Allô", "Allô là", "Salut là", "Bon matin",
-        "Ça va ben?", "Yo là", "✨ Allô toi", "👋 Allô!"
+        "Bonjour",
+        "Bon matin"
     ];
 
     document.getElementById("bonjour").textContent =
@@ -70,7 +119,6 @@
     const body = document.body;
     const button = document.getElementById("toggleTheme");
 
-    // Dark mode par défaut
     const savedTheme = localStorage.getItem("theme") || "dark";
     body.className = savedTheme;
     button.textContent = savedTheme === "dark" ? "☀️" : "🌙";
