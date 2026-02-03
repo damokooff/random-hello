@@ -5,60 +5,82 @@
     <title>Bonjour aléatoire</title>
     <style>
         body {
-            background-color: white;
-            color: black;
+            margin: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             font-size: 40px;
             font-family: Arial, sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body.dark {
+            background-color: #0f0f0f;
+            color: #ffffff;
+        }
+
+        body.light {
+            background-color: #ffffff;
+            color: #000000;
+        }
+
+        #toggleTheme {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            padding: 8px 14px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        body.dark #toggleTheme {
+            background: #ffffff;
+            color: #000000;
+        }
+
+        body.light #toggleTheme {
+            background: #000000;
+            color: #ffffff;
         }
     </style>
 </head>
-<body>
+<body class="dark">
+
+<button id="toggleTheme">☀️</button>
 
 <div id="bonjour"></div>
 
 <script>
     const bonjours = [
-        "Bonjour",          // Français
-        "Salut",            // Français familier
-        "Coucou",           // Français familier
-        "Hello",            // Anglais
-        "Hi",               // Anglais
-        "Hey",              // Anglais
-        "Hola",             // Espagnol
-        "Buenos días",      // Espagnol
-        "Ciao",             // Italien
-        "Salve",            // Italien
-        "Hallo",            // Allemand
-        "Guten Tag",        // Allemand
-        "Olá",              // Portugais
-        "Bom dia",          // Portugais
-        "Hej",              // Suédois / Danois
-        "Hoi",              // Néerlandais
-        "こんにちは",        // Japonais
-        "やあ",              // Japonais familier
-        "안녕하세요",        // Coréen
-        "مرحبا",            // Arabe
-        "Привет",           // Russe
-        "Здравствуйте",     // Russe formel
-        "你好",              // Chinois
-        "您好",              // Chinois poli
-        "Merhaba",          // Turc
-        "Cześć",            // Polonais
-        "Ahoj",             // Tchèque / Slovaque
-        "Γειά σου",         // Grec
-        "שלום",             // Hébreu
-        "नमस्ते",            // Hindi
-        "Sawubona",         // Zoulou
-        "👋 Hello there!",
-        "✨ Bonjour toi"
+        "Bonjour", "Salut", "Coucou", "Hello", "Hi", "Hey",
+        "Hola", "Buenos días", "Ciao", "Hallo", "Olá", "Hej",
+        "こんにちは", "안녕하세요", "مرحبا", "Привет", "你好",
+
+        /* Québécois 🇨🇦 */
+        "Allô", "Allô là", "Salut là", "Bon matin",
+        "Ça va ben?", "Yo là", "✨ Allô toi", "👋 Allô!"
     ];
 
-    const random = Math.floor(Math.random() * bonjours.length);
-    document.getElementById("bonjour").textContent = bonjours[random];
+    document.getElementById("bonjour").textContent =
+        bonjours[Math.floor(Math.random() * bonjours.length)];
+
+    const body = document.body;
+    const button = document.getElementById("toggleTheme");
+
+    // Dark mode par défaut
+    const savedTheme = localStorage.getItem("theme") || "dark";
+    body.className = savedTheme;
+    button.textContent = savedTheme === "dark" ? "☀️" : "🌙";
+
+    button.onclick = () => {
+        const isDark = body.classList.contains("dark");
+        body.className = isDark ? "light" : "dark";
+        localStorage.setItem("theme", body.className);
+        button.textContent = isDark ? "🌙" : "☀️";
+    };
 </script>
 
 </body>
