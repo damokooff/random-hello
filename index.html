@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Bonjour aléatoire</title>
+    <style>
+        body {
+            background-color: white;
+            color: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-size: 40px;
+            font-family: Arial, sans-serif;
+        }
+    </style>
+</head>
+<body>
+
+<div id="bonjour"></div>
+
+<script>
+    const bonjours = [
+        "Bonjour",          // Français
+        "Salut",            // Français familier
+        "Coucou",           // Français familier
+        "Hello",            // Anglais
+        "Hi",               // Anglais
+        "Hey",              // Anglais
+        "Hola",             // Espagnol
+        "Buenos días",      // Espagnol
+        "Ciao",             // Italien
+        "Salve",            // Italien
+        "Hallo",            // Allemand
+        "Guten Tag",        // Allemand
+        "Olá",              // Portugais
+        "Bom dia",          // Portugais
+        "Hej",              // Suédois / Danois
+        "Hoi",              // Néerlandais
+        "こんにちは",        // Japonais
+        "やあ",              // Japonais familier
+        "안녕하세요",        // Coréen
+        "مرحبا",            // Arabe
+        "Привет",           // Russe
+        "Здравствуйте",     // Russe formel
+        "你好",              // Chinois
+        "您好",              // Chinois poli
+        "Merhaba",          // Turc
+        "Cześć",            // Polonais
+        "Ahoj",             // Tchèque / Slovaque
+        "Γειά σου",         // Grec
+        "שלום",             // Hébreu
+        "नमस्ते",            // Hindi
+        "Sawubona",         // Zoulou
+        "👋 Hello there!",
+        "✨ Bonjour toi"
+    ];
+
+    const random = Math.floor(Math.random() * bonjours.length);
+    document.getElementById("bonjour").textContent = bonjours[random];
+</script>
+
+</body>
+</html>
