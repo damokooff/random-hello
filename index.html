@@ -7,12 +7,14 @@
         body {
             margin: 0;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
             font-size: 40px;
             font-family: Arial, sans-serif;
             transition: background-color 0.3s, color 0.3s;
+            text-align: center;
         }
 
         body.dark {
@@ -45,6 +47,23 @@
             background: #000000;
             color: #ffffff;
         }
+
+        #languagePrompt {
+            margin-top: 15px;
+            font-size: 16px;
+        }
+
+        #languagePrompt button {
+            margin: 0 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        #specialMessage {
+            margin-top: 15px;
+            font-size: 18px;
+            color: #ffdd57;
+        }
     </style>
 </head>
 <body class="dark">
@@ -52,73 +71,22 @@
 <button id="toggleTheme">☀️</button>
 
 <div id="bonjour"></div>
+<div id="specialMessage"></div>
+<div id="languagePrompt"></div>
 
 <script>
     const bonjours = [
-        /* Français */
-        "Bonjour",
-
-        /* Anglais */
-        "Hello",
-        "Good morning",
-
-        /* Espagnol */
-        "Buenos días",
-
-        /* Italien */
-        "Buongiorno",
-
-        /* Allemand */
-        "Guten Tag",
-
-        /* Portugais */
-        "Bom dia",
-
-        /* Néerlandais */
-        "Goedendag",
-
-        /* Scandinave */
-        "God morgon",
-        "God dag",
-
-        /* Japonais */
-        "こんにちは",
-
-        /* Coréen */
-        "안녕하세요",
-
-        /* Arabe */
-        "مرحبا",
-
-        /* Russe */
-        "Здравствуйте",
-
-        /* Chinois */
-        "您好",
-
-        /* Turc */
-        "Merhaba",
-
-        /* Grec */
-        "Γειά σας",
-
-        /* Hébreu */
-        "שלום",
-
-        /* Hindi */
-        "नमस्ते",
-
-        /* Québécois 🇨🇦 */
-        "Bonjour",
-        "Bon matin"
+        "Bonjour", "Hello", "Good morning", "Buenos días", "Buongiorno",
+        "Guten Tag", "Bom dia", "Goedendag", "God morgon", "God dag",
+        "こんにちは", "안녕하세요", "مرحبا", "Здравствуйте", "您好",
+        "Merhaba", "Γειά σας", "שלום", "नमस्ते", "Bonjour", "Bon matin"
     ];
 
-    document.getElementById("bonjour").textContent =
-        bonjours[Math.floor(Math.random() * bonjours.length)];
-
+    // -----------------------------
+    // THEME
+    // -----------------------------
     const body = document.body;
     const button = document.getElementById("toggleTheme");
-
     const savedTheme = localStorage.getItem("theme") || "dark";
     body.className = savedTheme;
     button.textContent = savedTheme === "dark" ? "☀️" : "🌙";
@@ -129,6 +97,49 @@
         localStorage.setItem("theme", body.className);
         button.textContent = isDark ? "🌙" : "☀️";
     };
+
+    // -----------------------------
+    // BONJOUR & LOCALSTORAGE
+    // -----------------------------
+    const bonjourDiv = document.getElementById("bonjour");
+    const specialMessageDiv = document.getElementById("specialMessage");
+
+    // Récupération des compteurs depuis localStorage
+    let bonjourCounts = JSON.parse(localStorage.getItem("bonjourCounts") || "{}");
+    let totalVisits = parseInt(localStorage.getItem("totalVisits") || "0") + 1;
+    localStorage.setItem("totalVisits", totalVisits);
+
+    // Choix aléatoire d'un bonjour
+    const bonjour = bonjours[Math.floor(Math.random() * bonjours.length)];
+    bonjourDiv.textContent = bonjour;
+
+    // Mise à jour du compteur
+    bonjourCounts[bonjour] = (bonjourCounts[bonjour] || 0) + 1;
+    localStorage.setItem("bonjourCounts", JSON.stringify(bonjourCounts));
+
+    // Affichage du message spécial si c’est la première fois pour ce bonjour
+    if (bonjourCounts[bonjour] === 1) {
+        specialMessageDiv.textContent = "Première fois que ce bonjour apparaît.";
+    }
+
+    // -----------------------------
+    // SUGGESTION DE LANGUE SI PREMIERE VISITE
+    // -----------------------------
+    const languagePromptDiv = document.getElementById("languagePrompt");
+    if (totalVisits === 1) {
+        languagePromptDiv.innerHTML = `
+            Souhaitez-vous changer la langue du site ?<br>
+            <button onclick="setLang('fr')">Français</button>
+            <button onclick="setLang('nl')">Néerlandais</button>
+            <button onclick="setLang('es')">Espagnol</button>
+            <button onclick="setLang('en')">Anglais</button>
+        `;
+    }
+
+    function setLang(lang) {
+        localStorage.setItem("siteLang", lang);
+        languagePromptDiv.innerHTML = `Langue définie sur <strong>${lang.toUpperCase()}</strong>.`;
+    }
 </script>
 
 </body>
