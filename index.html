@@ -27,10 +27,9 @@
             color: #000000;
         }
 
-        #toggleTheme {
+        #toggleTheme, #showIndex {
             position: fixed;
             top: 15px;
-            right: 15px;
             padding: 8px 14px;
             border: none;
             border-radius: 20px;
@@ -38,12 +37,20 @@
             font-size: 14px;
         }
 
-        body.dark #toggleTheme {
+        #toggleTheme {
+            right: 15px;
+        }
+
+        #showIndex {
+            left: 15px;
+        }
+
+        body.dark #toggleTheme, body.dark #showIndex {
             background: #ffffff;
             color: #000000;
         }
 
-        body.light #toggleTheme {
+        body.light #toggleTheme, body.light #showIndex {
             background: #000000;
             color: #ffffff;
         }
@@ -59,20 +66,24 @@
             cursor: pointer;
         }
 
-        #specialMessage {
-            margin-top: 15px;
+        #indexList {
+            margin-top: 20px;
             font-size: 18px;
-            color: #ffdd57;
+            text-align: left;
+            max-height: 50vh;
+            overflow-y: auto;
+            width: 80%;
         }
     </style>
 </head>
 <body class="dark">
 
 <button id="toggleTheme">☀️</button>
+<button id="showIndex">Index</button>
 
 <div id="bonjour"></div>
-<div id="specialMessage"></div>
 <div id="languagePrompt"></div>
+<div id="indexList"></div>
 
 <script>
     const bonjours = [
@@ -86,23 +97,24 @@
     // THEME
     // -----------------------------
     const body = document.body;
-    const button = document.getElementById("toggleTheme");
+    const toggleButton = document.getElementById("toggleTheme");
+    const indexButton = document.getElementById("showIndex");
     const savedTheme = localStorage.getItem("theme") || "dark";
     body.className = savedTheme;
-    button.textContent = savedTheme === "dark" ? "☀️" : "🌙";
+    toggleButton.textContent = savedTheme === "dark" ? "☀️" : "🌙";
 
-    button.onclick = () => {
+    toggleButton.onclick = () => {
         const isDark = body.classList.contains("dark");
         body.className = isDark ? "light" : "dark";
         localStorage.setItem("theme", body.className);
-        button.textContent = isDark ? "🌙" : "☀️";
+        toggleButton.textContent = isDark ? "🌙" : "☀️";
     };
 
     // -----------------------------
     // BONJOUR & LOCALSTORAGE
     // -----------------------------
     const bonjourDiv = document.getElementById("bonjour");
-    const specialMessageDiv = document.getElementById("specialMessage");
+    const indexListDiv = document.getElementById("indexList");
 
     // Récupération des compteurs depuis localStorage
     let bonjourCounts = JSON.parse(localStorage.getItem("bonjourCounts") || "{}");
@@ -116,11 +128,6 @@
     // Mise à jour du compteur
     bonjourCounts[bonjour] = (bonjourCounts[bonjour] || 0) + 1;
     localStorage.setItem("bonjourCounts", JSON.stringify(bonjourCounts));
-
-    // Affichage du message spécial si c’est la première fois pour ce bonjour
-    if (bonjourCounts[bonjour] === 1) {
-        specialMessageDiv.textContent = "Première fois que ce bonjour apparaît.";
-    }
 
     // -----------------------------
     // SUGGESTION DE LANGUE SI PREMIERE VISITE
@@ -140,6 +147,17 @@
         localStorage.setItem("siteLang", lang);
         languagePromptDiv.innerHTML = `Langue définie sur <strong>${lang.toUpperCase()}</strong>.`;
     }
+
+    // -----------------------------
+    // BOUTON INDEX
+    // -----------------------------
+    indexButton.onclick = () => {
+        let html = "<strong>Index des bonjours :</strong><br>";
+        for (const [key, value] of Object.entries(bonjourCounts)) {
+            html += `${key} : ${value} fois<br>`;
+        }
+        indexListDiv.innerHTML = html;
+    };
 </script>
 
 </body>
