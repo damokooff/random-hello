@@ -1,80 +1,140 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title>Bonjour aléatoire</title>
-    <style>
-        body {
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            font-size: 40px;
-            font-family: Arial, sans-serif;
-            transition: background-color 0.3s, color 0.3s;
-            text-align: center;
-        }
+<meta charset="UTF-8">
+<title>Bonjour aléatoire</title>
+<style>
+    body {
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        font-size: 40px;
+        font-family: Arial, sans-serif;
+        transition: background-color 0.3s, color 0.3s;
+        text-align: center;
+        overflow: hidden;
+    }
 
-        body.dark {
-            background-color: #0f0f0f;
-            color: #ffffff;
-        }
+    body.dark {
+        background-color: #0f0f0f;
+        color: #ffffff;
+    }
 
-        body.light {
-            background-color: #ffffff;
-            color: #000000;
-        }
+    body.light {
+        background-color: #ffffff;
+        color: #000000;
+    }
 
-        #toggleTheme, #showIndex {
-            position: fixed;
-            top: 15px;
-            padding: 8px 14px;
-            border: none;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 14px;
-        }
+    button {
+        padding: 8px 14px;
+        border: none;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 14px;
+        position: fixed;
+        top: 15px;
+    }
 
-        #toggleTheme {
-            right: 15px;
-        }
+    #toggleTheme {
+        right: 15px;
+    }
 
-        #showIndex {
-            left: 15px;
-        }
+    #showIndex {
+        left: 15px;
+    }
 
-        body.dark #toggleTheme, body.dark #showIndex {
-            background: #ffffff;
-            color: #000000;
-        }
+    body.dark button {
+        background: #ffffff;
+        color: #000000;
+    }
 
-        body.light #toggleTheme, body.light #showIndex {
-            background: #000000;
-            color: #ffffff;
-        }
+    body.light button {
+        background: #000000;
+        color: #ffffff;
+    }
 
-        #languagePrompt {
-            margin-top: 15px;
-            font-size: 16px;
-        }
+    #bonjour {
+        z-index: 1;
+    }
 
-        #languagePrompt button {
-            margin: 0 5px;
-            padding: 5px 10px;
-            cursor: pointer;
-        }
+    #languagePrompt {
+        margin-top: 15px;
+        font-size: 16px;
+    }
 
-        #indexList {
-            margin-top: 20px;
-            font-size: 18px;
-            text-align: left;
-            max-height: 50vh;
-            overflow-y: auto;
-            width: 80%;
-        }
-    </style>
+    #languagePrompt button {
+        margin: 0 5px;
+        padding: 5px 10px;
+        cursor: pointer;
+    }
+
+    /* Layer de l'index */
+    #indexLayer {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.85);
+        overflow-y: auto;
+        padding: 60px 20px 20px 20px;
+        box-sizing: border-box;
+        color: #fff;
+        z-index: 999;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    /* Croix pour fermer */
+    .closeIndex {
+        position: fixed;
+        top: 15px;
+        right: 20px;
+        font-size: 28px;
+        color: red;
+        font-weight: bold;
+        cursor: pointer;
+        z-index: 1000;
+        padding: 5px 10px;
+        border: 2px solid red;
+        border-radius: 6px;
+    }
+
+    /* Bouton reset en haut à gauche */
+    #resetIndex {
+        position: fixed;
+        top: 15px;
+        left: 20px;
+        padding: 12px 20px;
+        font-size: 16px;
+        border-radius: 12px;
+        cursor: pointer;
+        background-color: red;
+        color: #fff;
+        border: none;
+        z-index: 1000;
+    }
+
+    .bonjourCard {
+        background: rgba(255,255,255,0.1);
+        border: 1px solid rgba(255,255,255,0.3);
+        border-radius: 12px;
+        padding: 15px;
+        margin: 10px auto;
+        width: 80%;
+        text-align: center;
+    }
+
+    .bonjourCard span {
+        display: block;
+        margin-top: 5px;
+        font-size: 18px;
+    }
+</style>
 </head>
 <body class="dark">
 
@@ -83,22 +143,39 @@
 
 <div id="bonjour"></div>
 <div id="languagePrompt"></div>
-<div id="indexList"></div>
+
+<!-- Layer Index -->
+<div id="indexLayer"></div>
 
 <script>
     const bonjours = [
-        "Bonjour", "Hello", "Good morning", "Buenos días", "Buongiorno",
-        "Guten Tag", "Bom dia", "Goedendag", "God morgon", "God dag",
-        "こんにちは", "안녕하세요", "مرحبا", "Здравствуйте", "您好",
-        "Merhaba", "Γειά σας", "שלום", "नमस्ते", "Bonjour", "Bon matin"
+        { text: "Bonjour", lang: "fr", prob: 3 }, 
+        { text: "Hello", lang: "en", prob: 20 },
+        { text: "Good morning", lang: "en", prob: 20 },
+        { text: "Buenos días", lang: "es", prob: 6 },
+        { text: "Buongiorno", lang: "it", prob: 1 },
+        { text: "Guten Tag", lang: "de", prob: 1 },
+        { text: "Bom dia", lang: "pt", prob: 3 },
+        { text: "Goedendag", lang: "nl", prob: 0.5 },
+        { text: "God morgon", lang: "sv", prob: 0.3 },
+        { text: "God dag", lang: "da", prob: 0.3 },
+        { text: "こんにちは", lang: "jp", prob: 1.7 },
+        { text: "안녕하세요", lang: "kr", prob: 1.7 },
+        { text: "مرحبا", lang: "ar", prob: 5 },
+        { text: "Здравствуйте", lang: "ru", prob: 2 },
+        { text: "您好", lang: "zh", prob: 17 },
+        { text: "Merhaba", lang: "tr", prob: 1 },
+        { text: "Γειά σας", lang: "el", prob: 0.5 },
+        { text: "שלום", lang: "he", prob: 0.3 },
+        { text: "नमस्ते", lang: "hi", prob: 3 },
+        { text: "Bon matin", lang: "fr", prob: 0.5 }
     ];
 
-    // -----------------------------
-    // THEME
-    // -----------------------------
     const body = document.body;
     const toggleButton = document.getElementById("toggleTheme");
     const indexButton = document.getElementById("showIndex");
+    const indexLayer = document.getElementById("indexLayer");
+
     const savedTheme = localStorage.getItem("theme") || "dark";
     body.className = savedTheme;
     toggleButton.textContent = savedTheme === "dark" ? "☀️" : "🌙";
@@ -110,28 +187,21 @@
         toggleButton.textContent = isDark ? "🌙" : "☀️";
     };
 
-    // -----------------------------
     // BONJOUR & LOCALSTORAGE
-    // -----------------------------
     const bonjourDiv = document.getElementById("bonjour");
-    const indexListDiv = document.getElementById("indexList");
 
-    // Récupération des compteurs depuis localStorage
     let bonjourCounts = JSON.parse(localStorage.getItem("bonjourCounts") || "{}");
     let totalVisits = parseInt(localStorage.getItem("totalVisits") || "0") + 1;
     localStorage.setItem("totalVisits", totalVisits);
 
-    // Choix aléatoire d'un bonjour
-    const bonjour = bonjours[Math.floor(Math.random() * bonjours.length)];
+    const randomIndex = Math.floor(Math.random() * bonjours.length);
+    const bonjour = bonjours[randomIndex].text;
     bonjourDiv.textContent = bonjour;
 
-    // Mise à jour du compteur
     bonjourCounts[bonjour] = (bonjourCounts[bonjour] || 0) + 1;
     localStorage.setItem("bonjourCounts", JSON.stringify(bonjourCounts));
 
-    // -----------------------------
-    // SUGGESTION DE LANGUE SI PREMIERE VISITE
-    // -----------------------------
+    // SUGGESTION LANGUE PREMIERE VISITE
     const languagePromptDiv = document.getElementById("languagePrompt");
     if (totalVisits === 1) {
         languagePromptDiv.innerHTML = `
@@ -142,21 +212,49 @@
             <button onclick="setLang('en')">Anglais</button>
         `;
     }
-
     function setLang(lang) {
         localStorage.setItem("siteLang", lang);
         languagePromptDiv.innerHTML = `Langue définie sur <strong>${lang.toUpperCase()}</strong>.`;
     }
 
-    // -----------------------------
-    // BOUTON INDEX
-    // -----------------------------
+    // INDEX BUTTON
     indexButton.onclick = () => {
-        let html = "<strong>Index des bonjours :</strong><br>";
-        for (const [key, value] of Object.entries(bonjourCounts)) {
-            html += `${key} : ${value} fois<br>`;
+        // Trier par probabilité descendante (rare en bas)
+        const sorted = bonjours.slice().sort((a,b) => b.prob - a.prob);
+
+        // Vider le layer et ajouter croix + titre
+        indexLayer.innerHTML = '<span class="closeIndex" id="closeIndex">&times;</span><h2>Index des bonjours</h2>';
+
+        // Bouton Reset en haut à gauche
+        let resetBtn = document.createElement("button");
+        resetBtn.id = "resetIndex";
+        resetBtn.textContent = "Reset Index";
+        resetBtn.onclick = () => {
+            if (confirm("Êtes-vous sûr de vouloir réinitialiser l'index ?")) {
+                localStorage.removeItem("bonjourCounts");
+                indexLayer.style.display = "none";
+                location.reload();
+            }
+        };
+        indexLayer.appendChild(resetBtn);
+
+        // Cartes des bonjours
+        for (const b of sorted) {
+            const count = bonjourCounts[b.text] || 0;
+            const displayText = count > 0 ? b.text : "?".repeat(b.text.length); // afficher si obtenu
+            const card = document.createElement("div");
+            card.className = "bonjourCard";
+            card.innerHTML = `<strong>${displayText}</strong><span>Affiché : ${count} fois</span><span>Probabilité : ${b.prob}%</span>`;
+            indexLayer.appendChild(card);
         }
-        indexListDiv.innerHTML = html;
+
+        // Afficher le layer
+        indexLayer.style.display = "flex";
+
+        // Croix pour fermer
+        document.getElementById("closeIndex").onclick = () => {
+            indexLayer.style.display = "none";
+        };
     };
 </script>
 
