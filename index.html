@@ -134,6 +134,39 @@
         margin-top: 5px;
         font-size: 18px;
     }
+
+    /* Layer History */
+    #historyLayer {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.85);
+        color: #fff;
+        z-index: 10000;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-size: 50px;
+        text-align: center;
+        display: flex;
+    }
+
+    #historyLayer .closeHistory {
+        position: fixed;
+        top: 15px;
+        right: 20px;
+        font-size: 28px;
+        color: red;
+        font-weight: bold;
+        cursor: pointer;
+        padding: 5px 10px;
+        border: 2px solid red;
+        border-radius: 6px;
+        z-index: 10001;
+    }
 </style>
 </head>
 <body class="dark">
@@ -146,6 +179,12 @@
 
 <!-- Layer Index -->
 <div id="indexLayer"></div>
+
+<!-- Layer History -->
+<div id="historyLayer">
+    <span class="closeHistory">×</span>
+    <div>I 8 HISTORY</div>
+</div>
 
 <script>
     const bonjours = [
@@ -175,6 +214,8 @@
     const toggleButton = document.getElementById("toggleTheme");
     const indexButton = document.getElementById("showIndex");
     const indexLayer = document.getElementById("indexLayer");
+    const historyLayer = document.getElementById("historyLayer");
+    const closeHistory = document.querySelector("#historyLayer .closeHistory");
 
     const savedTheme = localStorage.getItem("theme") || "dark";
     body.className = savedTheme;
@@ -219,13 +260,9 @@
 
     // INDEX BUTTON
     indexButton.onclick = () => {
-        // Trier par probabilité descendante (rare en bas)
         const sorted = bonjours.slice().sort((a,b) => b.prob - a.prob);
-
-        // Vider le layer et ajouter croix + titre
         indexLayer.innerHTML = '<span class="closeIndex" id="closeIndex">&times;</span><h2>Index des bonjours</h2>';
 
-        // Bouton Reset en haut à gauche
         let resetBtn = document.createElement("button");
         resetBtn.id = "resetIndex";
         resetBtn.textContent = "Reset Index";
@@ -238,23 +275,28 @@
         };
         indexLayer.appendChild(resetBtn);
 
-        // Cartes des bonjours
         for (const b of sorted) {
             const count = bonjourCounts[b.text] || 0;
-            const displayText = count > 0 ? b.text : "?".repeat(b.text.length); // afficher si obtenu
+            const displayText = count > 0 ? b.text : "?".repeat(b.text.length);
             const card = document.createElement("div");
             card.className = "bonjourCard";
             card.innerHTML = `<strong>${displayText}</strong><span>Affiché : ${count} fois</span><span>Probabilité : ${b.prob}%</span>`;
             indexLayer.appendChild(card);
         }
-
-        // Afficher le layer
         indexLayer.style.display = "flex";
+        document.getElementById("closeIndex").onclick = () => indexLayer.style.display = "none";
+    };
 
-        // Croix pour fermer
-        document.getElementById("closeIndex").onclick = () => {
-            indexLayer.style.display = "none";
-        };
+    // HISTORY - Ctrl+H
+    document.addEventListener("keydown", (e) => {
+        if (e.ctrlKey && e.key.toLowerCase() === "h") {
+            e.preventDefault();
+            historyLayer.style.display = "flex";
+        }
+    });
+
+    closeHistory.onclick = () => {
+        historyLayer.style.display = "none";
     };
 </script>
 
